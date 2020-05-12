@@ -16,15 +16,13 @@ variable "cloudflare_api_token" {
   description = "Provide the token that has at least {\"Permissions\": \"Zone.DNS\", \"Resources\": \"All zones\"}"
 }
 
-variable "cf_zone_id" {
-    default = "e0ad5a6e3cae50b634d8233823f48d7c"
-}
-
-variable "all_records" {
-  default = [
+locals {
+  cf_zone_id = "e0ad5a6e3cae50b634d8233823f48d7c"
+  gitlab_pages_ipv4_address = "35.185.44.232"
+  all_records = [
     # Record type, record name, IP Address/value, is-proxied?
-    ["A",   "@",    "35.185.44.232",                        true  ],
-    ["A",   "www",  "35.185.44.232",                        true  ],
+    ["A",   "@",    local.gitlab_pages_ipv4_address,        true  ],
+    ["A",   "www",  local.gitlab_pages_ipv4_address,        true  ],
     ["TXT", "@",    "forward-email=g:gurjeet@singh.im",     false ],
     ["TXT", "@",    "forward-email=admin:gurjeet@singh.im", false ],
     ["TXT", "@",    "forward-email=info:gurjeet@singh.im",  false ],
@@ -34,11 +32,11 @@ variable "all_records" {
 }
 
 resource "cloudflare_record" "root-level" {
-  count   = length(var.all_records)
-  zone_id = var.cf_zone_id
-  type    = var.all_records[count.index][0]
-  name    = var.all_records[count.index][1]
-  value   = var.all_records[count.index][2]
-  proxied = var.all_records[count.index][3]
+  count   = length(local.all_records)
+  zone_id = local.cf_zone_id
+  type    = local.all_records[count.index][0]
+  name    = local.all_records[count.index][1]
+  value   = local.all_records[count.index][2]
+  proxied = local.all_records[count.index][3]
 }
 
