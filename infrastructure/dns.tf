@@ -20,26 +20,8 @@ variable "cf_zone_id" {
     default = "e0ad5a6e3cae50b634d8233823f48d7c"
 }
 
-variable "record_types" {
-  default = ["A", "AAAA"]
-}
-
-variable "names" {
-  default = [ "*", "q.ht", "www"]
-}
-
-variable "ip_addresses" {
-  default = [
-    "46.166.184.99",
-    "185.206.180.117",
-    "2a00:1768:2001:63::46:99",
-    "2a0b:1640:1:1:1:1:bb7:e646"
-  ]
-}
-
 variable "all_records" {
   default = [
-    # Record type, record name, IP Address, is-proxied?
     ["A",    "*",    "46.166.184.99",              false],
     ["A",    "*",    "185.206.180.117",            false],
     ["A",    "q.ht", "46.166.184.99",              true ],
@@ -52,6 +34,9 @@ variable "all_records" {
     ["AAAA", "q.ht", "2a0b:1640:1:1:1:1:bb7:e646", true ],
     ["AAAA", "www",  "2a00:1768:2001:63::46:99",   true ],
     ["AAAA", "www",  "2a0b:1640:1:1:1:1:bb7:e646", true ],
+    # Record type, record name, IP Address/value, is-proxied?
+
+    ["TXT", "_gitlab-pages-verification-code.q.ht", "gitlab-pages-verification-code=a0672e704d12da7b1ca76e71fed79f68", false]
   ]
 }
 
