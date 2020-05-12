@@ -23,11 +23,13 @@ variable "cf_zone_id" {
 variable "all_records" {
   default = [
     # Record type, record name, IP Address/value, is-proxied?
-    ["A",    "@",   "35.185.44.232", true],
-    ["A",    "www", "35.185.44.232", true ],
-    ["TXT", "@", "forward-email=g:gurjeet@singh.im",     false],
-    ["TXT", "@", "forward-email=admin:gurjeet@singh.im", false],
-    ["TXT", "@", "forward-email=info:gurjeet@singh.im",  false],
+    ["A",   "@",    "35.185.44.232",                        true  ],
+    ["A",   "www",  "35.185.44.232",                        true  ],
+    ["TXT", "@",    "forward-email=g:gurjeet@singh.im",     false ],
+    ["TXT", "@",    "forward-email=admin:gurjeet@singh.im", false ],
+    ["TXT", "@",    "forward-email=info:gurjeet@singh.im",  false ],
+    ["MX",  "q.ht", "mx1.forwardemail.net",                 false ],
+    ["MX",  "q.ht", "mx2.forwardemail.net",                 false ],
   ]
 }
 
