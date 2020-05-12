@@ -36,7 +36,8 @@ variable "all_records" {
     ["AAAA", "www",  "2a0b:1640:1:1:1:1:bb7:e646", true ],
     # Record type, record name, IP Address/value, is-proxied?
 
-    ["TXT", "_gitlab-pages-verification-code.q.ht", "gitlab-pages-verification-code=a0672e704d12da7b1ca76e71fed79f68", false]
+    ["TXT", "_gitlab-pages-verification-code.q.ht", "gitlab-pages-verification-code=a0672e704d12da7b1ca76e71fed79f68", false],
+    ["TXT", "_gitlab-pages-verification-code.www.q.ht", "gitlab-pages-verification-code=e0df8376078e36d180aa06e3de58d3b4", false],
   ]
 }
 
