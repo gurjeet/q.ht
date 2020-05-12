@@ -25,6 +25,9 @@ variable "all_records" {
     # Record type, record name, IP Address/value, is-proxied?
     ["A",    "@",   "35.185.44.232", true],
     ["A",    "www", "35.185.44.232", true ],
+    ["TXT", "@", "forward-email=g:gurjeet@singh.im",     false],
+    ["TXT", "@", "forward-email=admin:gurjeet@singh.im", false],
+    ["TXT", "@", "forward-email=info:gurjeet@singh.im",  false],
   ]
 }
 
