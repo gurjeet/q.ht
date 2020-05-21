@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Calculator</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <center>
+      <textarea oninput="calc()" placeholder="Write an expression"></textarea>
+      <br/>
+      <text>:)</text>
+    </center>
+    <script>
+      var input = document.getElementsByTagName("textarea")[0];
+      var output = document.getElementsByTagName("text")[0];
+      var getInput = function () {return input.value;}
+      var setOutput = function (value) {output.innerHTML = value;}
+      var calc = function(){
+        var expr = getInput();
+        var result;
+        try {
+          result = eval(expr);
+        } catch(err) {
+          result = err.name + ": " + err.message;
+        }
+        result = result === undefined ? "..." : result;
+        setOutput(result)
+      }
+    </script>
+  </body>
+</html>
