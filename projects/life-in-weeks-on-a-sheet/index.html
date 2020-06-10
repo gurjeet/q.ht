@@ -1,7 +1,140 @@
-<html>
-  <head>
-    <title>Life in Weeks, on a Sheet</title>
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Life in Weeks, on a Sheet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
   <body>
+    <div align="center">
+      <h1>Life in Weeks, on a Sheet</h1>
+      <label for="name">Name:</label>
+      <input id="name" type="text" value="Steve Jobs">
+      <label for="age">Age:</label>
+      <input id="age" type="number" min="0" max="80" value="56">
+      <br/>
+      <a href="#" class="btn btn-primary download-pdf">Download PDF</a>
+      <div id="preview-pane" style="height: 650px;position:relative; z-index:999">
+      </div>
+
+      <script type="text/javascript" src="./lib/jspdf.min.js"></script>
+      <script type="text/javascript" src="./lib//pdfobject.min.js"></script>
+      <script type="text/javascript">
+
+        const weeksInAYear = 53;
+
+        const forceUnifiedViewer = true;
+        const leftMargin = 20;
+        const nameY = 5;
+        const startX = leftMargin;
+        const startY = nameY + 5;
+        const maxYears = 80;
+        const fontSize = 13;
+        const footerX = leftMargin;
+
+        var strikeThrough = (function(){
+          var txt = '';
+          var i;
+          // 5 => line prefix (2 digits and a hyphen surrounded by spaces)
+          for( i = 0; i < (weeksInAYear + 5); ++i )
+            txt += '-';
+
+          return txt;
+        })();
+
+        var weekMarkerLine = (function() {
+          var txt = '';
+          var i;
+          for( i = 0; i < weeksInAYear; ++i )
+            txt += 'X';
+
+          return txt;
+        })();
+
+        var getDoc = function() {
+
+          var name = document.getElementById("name").value;
+          var age  = document.getElementById("age" ).value;
+
+          var doc = new jsPDF( { putOnlyUsedFonts: true } );
+
+          doc.setFont("courier");
+          doc.setFontStyle("bold");
+          doc.setFontSize(fontSize);
+          doc.text(name, leftMargin, nameY);
+
+          var i;
+          for( i = 1; i <= maxYears; ++i ) {
+            var txt = '';
+
+            if( i < 10)
+              txt += " ";
+
+            txt += i + " - " + weekMarkerLine;
+
+            if( i > age)
+              doc.setFontStyle("normal");
+
+            doc.text(txt, startX, (startY + 1) + ((i-1) * 3.5));
+
+            if( i <= age) {
+              //doc.text(strikeThrough, startX, -0.3 + (startY + 1) + ((i-1) * 3.5));
+              var y = -1.3 +  (startY + 1) + ((i-1) * 3.5);
+              doc.line(leftMargin, y, 180, y, "S");
+              y -= 0.2;
+              doc.line(leftMargin, y, 180, y, "S");
+            }
+          }
+
+          return doc;
+        };
+
+        var update = function() {
+
+          setTimeout(function() {
+
+            var doc = getDoc();
+
+                    var options = {
+                        //height: "400px",
+                      pdfOpenParams: {
+                        navpanes: 1,
+                        toolbar: 1,
+                        view: "FitBH",
+                        statusbar: 1,
+                        /*
+                         *  TODO: Figure out how to make the page fit in screen
+                         * with all corners visible. Need to use a variant of
+                         * Fit* from below.
+                         * https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDFOpenParams.pdf
+                         */
+                      }
+                    };
+
+            if (typeof doc !== "undefined") {
+              try {
+                if ( forceUnifiedViewer
+                      || navigator.appVersion.indexOf("MSIE") !== -1
+                      || navigator.appVersion.indexOf("Edge") !== -1
+                      || navigator.appVersion.indexOf("Trident") !== -1) {
+
+                    options.forcePDFJS = true;
+                    options.PDFJS_URL = "./lib/PDF.js/web/viewer.html";
+
+                    PDFObject.embed(doc.output("bloburl"), "#preview-pane", options);
+
+                } else {
+                    PDFObject.embed(doc.output("datauristring"), "#preview-pane", options);
+                }
+              } catch (e) {
+                alert("Error " + e);
+              }
+            }
+          }, 0);
+        };
+
+        update();
+      </script>
+    </div>
   </body>
 </html>
