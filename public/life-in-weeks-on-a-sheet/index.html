@@ -7,7 +7,7 @@
 </head>
   <body>
     <div align="center">
-      <h1>Life in Weeks, on a Sheet</h1>
+      <h1>Life in Weeks, on One Sheet</h1>
       <label for="name">Name:</label>
       <input id="name" type="text" value="Steve Jobs">
       <label for="age">Age:</label>
@@ -31,6 +31,8 @@
         const maxYears = 80;
         const fontSize = 13;
         const footerX = leftMargin;
+        const footerY = leftMargin;
+        const footerText = "q.ht/life-in-weeks-on-one-sheet";
 
         var strikeThrough = (function(){
           var txt = '';
@@ -64,6 +66,7 @@
           doc.text(name, leftMargin, nameY);
 
           var i;
+          var y;
           for( i = 1; i <= maxYears; ++i ) {
             var txt = '';
 
@@ -75,16 +78,22 @@
             if( i > age)
               doc.setFontStyle("normal");
 
-            doc.text(txt, startX, (startY + 1) + ((i-1) * 3.5));
+            y =  (startY + 1) + ((i-1) * 3.5);
+
+            doc.text(txt, startX, y);
 
             if( i <= age) {
-              //doc.text(strikeThrough, startX, -0.3 + (startY + 1) + ((i-1) * 3.5));
-              var y = -1.3 +  (startY + 1) + ((i-1) * 3.5);
+              y -= 1.3;
               doc.line(leftMargin, y, 180, y, "S");
               y -= 0.2;
               doc.line(leftMargin, y, 180, y, "S");
             }
           }
+
+          y += 5;
+          doc.setFontStyle("normal");
+          doc.setFontSize(6);
+          doc.text(footerText, leftMargin, y);
 
           return doc;
         };
