@@ -1,27 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Life in Weeks, on a Sheet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+<html lang="en" st>
+  <head>
+    <meta charset="utf-8">
+    <title>Life in Weeks, on a Sheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      html
+      , body
+      , table
+      , tbody {
+        height: 100%;
+        width: 100%;
+      }
+
+      tr {
+        height: 50%;
+      }
+
+      td {
+        height: 100%;
+        width: 50%;
+        text-align: center;
+        vertical-align: top;
+      }
+
+      p {
+        text-align: left;
+      }
+
+      #preview-pane {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
   <body>
-    <div align="center">
-      <h1>Life in Weeks, on One Sheet</h1>
-      <label for="name">Name:</label>
-      <input id="name" type="text" value="Steve Jobs">
-      <label for="age">Age:</label>
-      <input id="age" type="number" min="0" max="80" value="56">
-      <br/>
-      <a href="#" class="btn btn-primary download-pdf">Download PDF</a>
-      <div id="preview-pane" style="height: 650px;position:relative; z-index:999">
-      </div>
+    <table><tr>
+      <td>
+        <h1>Life in Weeks, on One Sheet</h1>
+        <h2><a href="https://en.wikipedia.org/wiki/Overview_effect" target="_blank">Overview Effect</a> for your life</h2>
+        <label for="name">Name:</label>
+        <input id="name" type="text" value="Steve Jobs" oninput="debouncedUpdate()">
+        <label for="age">Age:</label>
+        <input id="age" type="number" min="0" max="80" value="56" size="4" oninput="debouncedUpdate()">
+        <p>
+          Enter your name and age, and visualize how much of your life you have spent. Each X marks a week of your life.
+        </p>
+        <p>
+          No data is sent to any server; all processing is done locally in your browser.
+        </p>
+        <a href="#" onclick="downloadPDF()">Download PDF</a>
+      </td>
+      </tr>
+      <tr>
+      <td>
+        <!--div id="preview-pane" style="width: 650px; height: 650px;position:relative; z-index:999"-->
+        <div id="preview-pane">
+        </div>
+      </td>
+    </tr> </table>
 
       <script type="text/javascript" src="./lib/jspdf.min.js"></script>
       <script type="text/javascript" src="./lib//pdfobject.min.js"></script>
       <script type="text/javascript">
 
-        const weeksInAYear = 53;
+        const weeksInAYear = 53; // an approximation
 
         const forceUnifiedViewer = true;
         const leftMargin = 20;
@@ -33,16 +76,6 @@
         const footerX = leftMargin;
         const footerY = leftMargin;
         const footerText = "q.ht/life-in-weeks-on-one-sheet";
-
-        var strikeThrough = (function(){
-          var txt = '';
-          var i;
-          // 5 => line prefix (2 digits and a hyphen surrounded by spaces)
-          for( i = 0; i < (weeksInAYear + 5); ++i )
-            txt += '-';
-
-          return txt;
-        })();
 
         var weekMarkerLine = (function() {
           var txt = '';
@@ -104,21 +137,14 @@
 
             var doc = getDoc();
 
-                    var options = {
-                        //height: "400px",
-                      pdfOpenParams: {
-                        navpanes: 1,
-                        toolbar: 1,
-                        view: "FitBH",
-                        statusbar: 1,
-                        /*
-                         *  TODO: Figure out how to make the page fit in screen
-                         * with all corners visible. Need to use a variant of
-                         * Fit* from below.
-                         * https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDFOpenParams.pdf
-                         */
-                      }
-                    };
+            var options = {
+              pdfOpenParams: {
+                navpanes: 0,
+                toolbar: 0,
+                statusbar: 0,
+                view: "FitV",
+              }
+            };
 
             if (typeof doc !== "undefined") {
               try {
@@ -128,7 +154,6 @@
                       || navigator.appVersion.indexOf("Trident") !== -1) {
 
                     options.forcePDFJS = true;
-                    options.PDFJS_URL = "./lib/PDF.js/web/viewer.html";
                     options.PDFJS_URL = "./lib/pdfjs-dist-2.4.456-minified/web/viewer.html";
 
                     PDFObject.embed(doc.output("bloburl"), "#preview-pane", options);
@@ -143,8 +168,31 @@
           }, 0);
         };
 
-        update();
+        function debounce(func, wait, immediate) {
+          var timeout;
+          return function() {
+            var context = this, args = arguments;
+            var later = function() {
+              timeout = null;
+              if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+          };
+        };
+
+        var downloadPDF = function() {
+          var doc = getDoc();
+          var name = document.getElementById("name").value;
+          doc.save(name + "-life-in-weeks.pdf")
+        }
+
+        var debouncedUpdate = debounce(update, 1000, false);
+
+        // Fire the update event once right after loading the page
+        debouncedUpdate();
       </script>
-    </div>
   </body>
 </html>
