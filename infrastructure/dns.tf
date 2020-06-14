@@ -19,10 +19,11 @@ variable "cloudflare_api_token" {
 locals {
   cf_zone_id = "e0ad5a6e3cae50b634d8233823f48d7c"
   gitlab_pages_ipv4_address = "35.185.44.232"
+  github_pages_ipv4_address = "185.199.109.153"
   all_records = [
     # Record type, record name, IP Address/value, is-proxied?
-    ["A",   "@",    local.gitlab_pages_ipv4_address,        true  ],
-    ["A",   "www",  local.gitlab_pages_ipv4_address,        true  ],
+    ["A",   "@",    local.github_pages_ipv4_address,        true  ],
+    ["A",   "www",  local.github_pages_ipv4_address,        true  ],
     ["TXT", "@",    "forward-email=g:gurjeet@singh.im",     false ],
     ["TXT", "@",    "forward-email=admin:gurjeet@singh.im", false ],
     ["TXT", "@",    "forward-email=info:gurjeet@singh.im",  false ],
