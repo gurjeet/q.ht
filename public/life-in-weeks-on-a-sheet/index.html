@@ -4,84 +4,86 @@
     <meta charset="utf-8">
     <title>Life in Weeks, on a Sheet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css" />
     <style>
-      html
-      , body
-      , table
-      , tbody {
+      /* Make these elements take up all the space provided by their containers */
+      html,
+      body,
+      .pure-g {
         height: 100%;
         width: 100%;
       }
 
-      tr {
-        height: 50%;
+      #preview-pane {
+          height: 100%;
       }
 
-      td {
-        height: 100%;
-        width: 50%;
+      * {
         text-align: center;
-        vertical-align: top;
       }
 
       p {
         text-align: left;
       }
-
-      #preview-pane {
-        height: 100%;
-        width: 100%;
-      }
     </style>
   </head>
   <body>
-    <table><tr>
-      <td>
+    <div class="pure-g">
+      <!--
+        Use 11/24 ratio for switching between grid style, since a strict 1/2
+        ratio does not result in 2-column orientation on medium or above
+        screens. This is perhaps bcauuse PureCSS injects some whitespace
+        between the columns which, with a 1/2 ratio, makes the total width of
+        2 columns plus the whitepsace becomes larger than 100%, so PureCSS
+        decides to make it 1-column layout, instead.
+      -->
+      <div class="pure-u-1 pure-u-md-11-24">
         <h1>Life in Weeks, on One Sheet</h1>
-        <h2><a href="https://en.wikipedia.org/wiki/Overview_effect" target="_blank">Overview Effect</a> for your life</h2>
+        <h2><a href="https://en.wikipedia.org/wiki/Overview_effect" target="_blank">Overview Effect</a> for one's life</h2>
         <label for="name">Name:</label>
         <input id="name" type="text" value="Steve Jobs" oninput="debouncedUpdate()">
         <label for="age">Age:</label>
         <input id="age" type="number" min="0" max="80" value="56" size="4" oninput="debouncedUpdate()">
         <p>
-          Enter your name and age, and visualize how much of your life you have spent. Each X marks a week of your life.
+          Enter your name and age, and visualize how much of your life you have
+          spent. Each row represents a year of your life and each X marks
+          approximately a week of your life.
         </p>
         <p>
-          No data is sent to any server; all processing is done locally in your browser.
+          PS: No data is sent to any server; all processing is done locally in
+          your browser. A modern browser with Javascript enabled is required
+          for proper functioning of this page.
+        </p>
+        <p>
+          PPS: Eighty rows in the generated PDF shoud not be taken to imply
+          anything. That's just how many rows I could comfortably fit on an A4
+          page.
         </p>
         <a href="#" onclick="downloadPDF()">Download PDF</a>
-      </td>
-      </tr>
-      <tr>
-      <td>
-        <!--div id="preview-pane" style="width: 650px; height: 650px;position:relative; z-index:999"-->
-        <div id="preview-pane">
-        </div>
-      </td>
-    </tr> </table>
+      </div>
+      <div id="preview-pane" class="pure-u-1 pure-u-md-11-24">
+      </div>
+    </div>
 
       <script type="text/javascript" src="./lib/jspdf.min.js"></script>
       <script type="text/javascript" src="./lib//pdfobject.min.js"></script>
       <script type="text/javascript">
 
-        const weeksInAYear = 53; // an approximation
+        const weeksInAYear = 53; // an approximation, using ceil()
 
         const forceUnifiedViewer = true;
-        const leftMargin = 20;
+        const leftMargin = 25;
         const nameY = 5;
-        const startX = leftMargin;
         const startY = nameY + 5;
         const maxYears = 80;
         const fontSize = 13;
-        const footerX = leftMargin;
-        const footerY = leftMargin;
+        const strikeThroughLength = 160;
         const footerText = "q.ht/life-in-weeks-on-one-sheet";
 
         var weekMarkerLine = (function() {
-          var txt = '';
           var i;
-          for( i = 0; i < weeksInAYear; ++i )
-            txt += 'X';
+          var txt = "";
+          for( i = 0; i < weeksInAYear; ++i ) txt += "X";
 
           return txt;
         })();
@@ -94,38 +96,47 @@
           var doc = new jsPDF( { putOnlyUsedFonts: true } );
 
           doc.setFont("courier");
-          doc.setFontStyle("bold");
           doc.setFontSize(fontSize);
+
+          doc.setFontStyle("bold");
           doc.text(name, leftMargin, nameY);
+          doc.setFontStyle("normal");
+          doc.text("Life in Weeks", leftMargin + 125, nameY);
 
           var i;
-          var y;
+          var y; // y-offset
+          doc.setFontStyle("bold"); // Use bold style for years that are in the past
           for( i = 1; i <= maxYears; ++i ) {
-            var txt = '';
+            var txt = "";
 
-            if( i < 10)
-              txt += " ";
+            if( i < 10) txt += " ";
 
             txt += i + " - " + weekMarkerLine;
 
-            if( i > age)
-              doc.setFontStyle("normal");
+            // Use normal style for years that are in future
+            if( i > age) doc.setFontStyle("normal");
 
             y =  (startY + 1) + ((i-1) * 3.5);
 
-            doc.text(txt, startX, y);
+            doc.text(txt, leftMargin, y);
 
+            /*
+             * Draw 2 lines close to each other to give an impression of a bold
+             * styled strike-through.
+             */
             if( i <= age) {
               y -= 1.3;
-              doc.line(leftMargin, y, 180, y, "S");
+              doc.line(leftMargin, y, leftMargin + strikeThroughLength, y, "S");
               y -= 0.2;
-              doc.line(leftMargin, y, 180, y, "S");
+              doc.line(leftMargin, y, leftMargin + strikeThroughLength, y, "S");
+
+              y += 1.5; // move y forward to its original position
             }
           }
 
           y += 5;
           doc.setFontStyle("normal");
-          doc.setFontSize(6);
+          doc.setFontSize(10);
           doc.text(footerText, leftMargin, y);
 
           return doc;
@@ -168,6 +179,17 @@
           }, 0);
         };
 
+        /*
+         * Create a debounced version of a function.
+         *
+         * Returns a function, that, as long as it continues to be invoked,
+         * will not be triggered. The function will be called after it stops
+         * being called for N milliseconds. If `immediate` is passed, trigger
+         * the function on the leading edge, instead of the trailing.
+         *
+         * This function copied verbatim from
+         * https://davidwalsh.name/javascript-debounce-function
+         */
         function debounce(func, wait, immediate) {
           var timeout;
           return function() {
@@ -186,7 +208,7 @@
         var downloadPDF = function() {
           var doc = getDoc();
           var name = document.getElementById("name").value;
-          doc.save(name + "-life-in-weeks.pdf")
+          doc.save(name + " life-in-weeks-on-a-sheet.pdf")
         }
 
         var debouncedUpdate = debounce(update, 1000, false);
@@ -196,3 +218,4 @@
       </script>
   </body>
 </html>
+
