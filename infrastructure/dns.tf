@@ -28,8 +28,8 @@ locals {
     ["TXT", "@",    "forward-email=info:gurjeet@singh.im",  false ],
     ["MX",  "@",    "mx1.forwardemail.net",                 false ],
     ["MX",  "@",    "mx2.forwardemail.net",                 false ],
-    ["TXT", "_gitlab-pages-verification-code.q.ht", "gitlab-pages-verification-code=a0672e704d12da7b1ca76e71fed79f68", false  ],
-    ["TXT", "_gitlab-pages-verification-code.www.q.ht", "gitlab-pages-verification-code=e0df8376078e36d180aa06e3de58d3b4", false  ],
+    ["TXT", "_gitlab-pages-verification-code.q.ht", "gitlab-pages-verification-code=c8edb900c9000be01aee5b68852a24d8", false  ],
+    ["TXT", "_gitlab-pages-verification-code.www.q.ht", "gitlab-pages-verification-code=4e6affee8ea263812f8038d198d3ffb4", false  ],
   ]
 }
 
