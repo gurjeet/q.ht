@@ -1,0 +1,50 @@
+<!doctype html>
+
+<!-- center _all_ the contents -->
+<html class='center'>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Quote of the Day</title>
+    <style>
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%; /* Occupy 100% of parent element */
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <p id='quote' ></p>
+    <p id='author'></p>
+    <button type="button" onclick="loadQuote()">More</button>
+    <script>
+      var quotes =
+        [
+          [
+            "When a measure becomes a target, it ceases to be a good measure.",
+            "Goodhart's law",
+          ],
+          [
+            "If you tell the truth, you don't have to remember anything.",
+            "Mark Twain",
+          ],
+          [
+          "Insanity is doing the same thing over and over again, but expecting different results.",
+          "Jane Fulton (fictional character by Rita Mae Brown)",
+          ],
+        ];
+
+      function loadQuote() {
+        var offset = Math.floor(Math.random() * quotes.length);
+
+        document.getElementById("quote" ).innerHTML = quotes[offset][0];
+        document.getElementById("author").innerHTML = quotes[offset][1];
+      }
+
+      loadQuote();
+    </script>
+  </body>
+</html>
+
